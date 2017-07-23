@@ -3,6 +3,7 @@ package retrieval
 import (
 	"log"
 	"regexp"
+	"strings"
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
@@ -11,7 +12,7 @@ import (
 var whitespace = regexp.MustCompile("\\s+")
 
 func tokenize(input string) []string {
-	return whitespace.Split(input, -1)
+	return whitespace.Split(strings.ToLower(input), -1)
 }
 
 func joinWithNullSep(token string, filename string) []byte {
