@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math"
 	"sort"
-	"sync"
 
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -41,7 +40,6 @@ const dfPrefix = "df"
 const tfPrefix = "tf"
 
 type VectorIndex struct {
-	sync.Mutex
 	db      *leveldb.DB
 	dfCache map[string]uint32
 }
