@@ -32,7 +32,7 @@ import (
 // Note that this implies filenames cannot contain '\0'
 const ftPrefix = "ft"
 
-// term -> number of times a term appears in the corpus
+// term -> number of documents that contain the term
 const dfPrefix = "df"
 
 // term\0filename -> number of time a term appears in a document
@@ -118,21 +118,31 @@ func (v *VectorIndex) increment(keyBytes []byte) error {
 
 func (v *VectorIndex) Add(filename string, contents string) error {
 	tokens := tokenize(contents)
+	uniqueTokens := make(map[string]struct{})
 	for _, token := range tokens {
+		uniqueTokens[token] = struct{}{}
+
 		ftKey := []byte(ftPrefix)
 		ftKey = append(ftKey, joinWithNullSep(filename, token)...)
-
-		dfKey := []byte(dfPrefix)
-		dfKey = append(dfKey, []byte(token)...)
 
 		tfKey := []byte(tfPrefix)
 		tfKey = append(tfKey, joinWithNullSep(token, filename)...)
 
-		for _, keyBytes := range [][]byte{ftKey, dfKey, tfKey} {
+		for _, keyBytes := range [][]byte{ftKey, tfKey} {
 			err := v.increment(keyBytes)
 			if err != nil {
 				return err
 			}
+		}
+	}
+	// Only increment the document frequency mapping once for each unique token
+	// that appears in the document
+	for token := range uniqueTokens {
+		dfKey := []byte(dfPrefix)
+		dfKey = append(dfKey, []byte(token)...)
+		err := v.increment(dfKey)
+		if err != nil {
+			return err
 		}
 		v.dfCache[token]++
 	}

@@ -32,7 +32,7 @@ func TestVectorIndexDFCache(t *testing.T) {
 		t.Error(err)
 	}
 	expected := map[string]uint32{
-		"foo": 2,
+		"foo": 1,
 		"bar": 1,
 		"baz": 1,
 	}
@@ -47,8 +47,8 @@ func TestVectorIndexDFCache(t *testing.T) {
 		t.Error(err)
 	}
 	expected = map[string]uint32{
-		"foo": 4,
-		"bar": 3,
+		"foo": 2,
+		"bar": 2,
 		"baz": 1,
 		"bat": 1,
 	}
@@ -228,7 +228,7 @@ func TestVectorIndex(t *testing.T) {
 		filename string
 		contents string
 	}{
-		{"a", "hello hello hello hello world"},
+		{"a", "hello hello world"},
 		{"b", "hello tiger tiger"},
 		{"c", "rumic tiger"},
 	} {
